@@ -43,6 +43,9 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Arrays;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import javax.annotation.CheckForNull;
 
@@ -202,7 +205,8 @@ public abstract class AbstractMavenProcessFactory
                 // open a TCP socket to talk to the launched Maven process.
                 // let the OS pick up a random open port
                 this.serverSocket = new ServerSocket();
-                serverSocket.bind(null); // new InetSocketAddress(InetAddress.getLocalHost(),0));
+                String address = System.getenv("JENKINS_MAVEN_AGENT_ADDRESS");
+                serverSocket.bind(new InetSocketAddress(InetAddress.getByName(address), 0)); // new InetSocketAddress(InetAddress.getLocalHost(),0));
                 // prevent a hang at the accept method in case the forked process didn't start successfully
                 serverSocket.setSoTimeout(MavenProcessFactory.socketTimeOut);
             }
